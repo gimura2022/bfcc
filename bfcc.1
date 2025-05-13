@@ -17,6 +17,8 @@
 .Op Fl e Ar fn
 .Op Fl p Ar fn
 .Op Fl G Ar fn
+.Op Fl i Ar fn
+.Op Fl d Ar fn
 .Op Fl l Ar library
 .Op Fl z
 .Op Ar
@@ -46,6 +48,10 @@ set code entry point for runtime.
 set runtime put function name.
 .It Fl p Ar fn
 set runtime get function name.
+.It Fl i Ar fn
+set runtime stack increment function name (it used only in stack overflow checker, see -z).
+.It Fl d Ar fn
+set runtime stack decrement function name (it used only in stack overflow checker, see -z).
 .It Fl l Ar library
 set runtime library.
 .It Fl z

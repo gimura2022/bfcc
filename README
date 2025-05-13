@@ -5,7 +5,7 @@ NAME
 
 SYNOPSIS
      bfcc [-C] [-c] [-h] [-o file] [-S stack_size] [-g cc] [-e fn] [-p fn]
-	  [-G fn] [-l library] [-z] [file ...]
+	  [-G fn] [-i fn] [-d fn] [-l library] [-z] [file ...]
      file
 
 DESCRYPTION
@@ -30,6 +30,12 @@ DESCRYPTION
      -p fn   set runtime put function name.
 
      -p fn   set runtime get function name.
+
+     -i fn   set runtime stack increment function name (it used only in stack
+	     overflow checker, see -z).
+
+     -d fn   set runtime stack decrement function name (it used only in stack
+	     overflow checker, see -z).
 
      -l library
 	     set runtime library.

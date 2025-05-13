@@ -36,6 +36,8 @@
 static const char* bfcc_entry = BFCCLIB_ENTRY_NAME;
 static const char* bfcc_put   = BFCCLIB_PUT_NAME;
 static const char* bfcc_get   = BFCCLIB_GET_NAME;
+static const char* bfcc_inc   = BFCCLIB_INC_NAME;
+static const char* bfcc_dec   = BFCCLIB_DEC_NAME;
 static const char* bfcc_lib   = BFCCLIB_NAME;
 static int stack_size         = DEFAULT_STACK_SIZE;
 static const char* cc         = DEFAULT_CC;
@@ -91,14 +93,14 @@ static void err(int status, const char* format, ...)
 #define c_bf_put() fprintf(__CODE_FILE, "\t%s(*stack_ptr);\n", bfcc_put)
 #define c_bf_get() fprintf(__CODE_FILE, "\t%s(stack_ptr);\n", bfcc_get)
 
-#define c_bf_inc() fprintf(__CODE_FILE, "\t" BFCCLIB_INC_NAME "(&stack_ptr, stack, %d);\n", stack_size)
-#define c_bf_dec() fprintf(__CODE_FILE, "\t" BFCCLIB_DEC_NAME "(&stack_ptr, stack, %d);\n", stack_size)
+#define c_bf_inc() fprintf(__CODE_FILE, "\t%s(&stack_ptr, stack, %d);\n", bfcc_inc, stack_size)
+#define c_bf_dec() fprintf(__CODE_FILE, "\t%s(&stack_ptr, stack, %d);\n", bfcc_dec, stack_size)
 
 #define c_bf_forward_decls() 									\
 	fprintf(__CODE_FILE, "extern void %s(char);\n", bfcc_put);				\
 	fprintf(__CODE_FILE, "extern void %s(char*);\n", bfcc_get);				\
-	fprintf(__CODE_FILE, "extern void %s(char**, char*, int);\n", BFCCLIB_INC_NAME);	\
-	fprintf(__CODE_FILE, "extern void %s(char**, char*, int);\n", BFCCLIB_DEC_NAME);
+	fprintf(__CODE_FILE, "extern void %s(char**, char*, int);\n", bfcc_inc);		\
+	fprintf(__CODE_FILE, "extern void %s(char**, char*, int);\n", bfcc_dec);
 
 /* function for printing output c code to file */
 static void compile(const char* code, FILE* out)
@@ -245,7 +247,7 @@ static void compile_full(const char* out_name, const char* in_name)
 
 /* usage text */
 #define USAGE_SMALL	"usage: bfcc [-C][-c][-h][-o file][-S stack_size][-g cc]"		\
-				"[-e fn][-p fn][-G fn][-l library][-z] file\n"
+				"[-e fn][-p fn][-G fn][-i fn][-d fn][-l library][-z] file\n"
 #define USAGE		"	-C		compile to C source code\n"			\
 			"	-c		compile to object file\n"			\
 			"	-h		print help\n"					\
@@ -255,6 +257,8 @@ static void compile_full(const char* out_name, const char* in_name)
 			"	-e fn		set generated code entry point\n"		\
 			"	-p fn		set generated code put function\n"		\
 			"	-G fn		set generated code get function\n"		\
+			"	-i fn		set generated code inc function\n"		\
+			"	-d fn		set generated code dec function\n"		\
 			"	-l library	set generated code bfcc library\n"		\
 			"	-z		enable more checks\n"				\
 			"	file		brainfuck file to compile\n"
@@ -294,7 +298,7 @@ int main(int argc, char* argv[])
 
 	int c;
 	opterr = 0;
-	while ((c = getopt(argc, argv, "Ccho:S:g:e:p:G:l:z")) != -1) switch (c) {
+	while ((c = getopt(argc, argv, "Ccho:S:g:e:p:G:i:d:l:z")) != -1) switch (c) {
 	case 'C':				/* compile c source */
 		mode = MODE_COMPILE_C;
 		break;
@@ -325,6 +329,14 @@ int main(int argc, char* argv[])
 
 	case 'G':				/* get function name */
 		bfcc_get = optarg;
+		break;
+
+	case 'i':				/* inc function name */
+		bfcc_inc = optarg;
+		break;
+
+	case 'd':				/* dec function name */
+		bfcc_dec = optarg;
 		break;
 
 	case 'l':				/* library name */
