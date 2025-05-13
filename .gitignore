@@ -1,0 +1,5 @@
+bfcc
+*.out
+
+*.o
+lib*.*

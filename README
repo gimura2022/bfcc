@@ -1,0 +1,59 @@
+bfcc(1)			    General Commands Manual		       bfcc(1)
+
+NAME
+     bfcc - brainfuck to C compiler
+
+SYNOPSIS
+     bfcc [-C] [-c] [-h] [-o file] [-S stack_size] [-g cc] [-e fn] [-p fn]
+	  [-G fn] [-l library] [-z] [file ...]
+     file
+
+DESCRYPTION
+     The bfcc is brainfuck compiler using c.
+
+     -C	     compile to C source code.
+
+     -c	     compile not linked object file.
+
+     -h	     print usage.
+
+     -o file
+	     set output file name.
+
+     -S stack_size
+	     set brainfuck stack size, by default 30000.
+
+     -g cc   set C compiler name.
+
+     -e fn   set code entry point for runtime.
+
+     -p fn   set runtime put function name.
+
+     -p fn   set runtime get function name.
+
+     -l library
+	     set runtime library.
+
+     -z	     enable stack overflow checker, guarantees that the program can't
+	     call undefined behaviour.
+
+EXIT STATUS
+     The bfcc utility exits 0 on success, and >0 if an error occurs.
+
+STANDARTS
+     The bfcc utility is compliant with the IEEE Std 1003.1-2008 ("POSIX.1")
+     specification.
+
+NOTES
+     Programms compiled by bfcc require runtime library (by default libbfcc).
+
+     You can install runtime without compiler, run "make runtime" with
+     superuser rights.
+
+AUTHORS
+     gimura <gimura0001@gmail.com>
+
+SEE ALSO
+     cc(1)
+
+Debian				 May 13, 2025				Debian

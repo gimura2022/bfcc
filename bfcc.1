@@ -1,0 +1,77 @@
+.Dd $Mdocdate$
+.Dt bfcc 1
+.Os
+.
+.Sh NAME
+.Nm bfcc
+.Nd brainfuck to C compiler
+.
+.Sh SYNOPSIS
+.Nm
+.Op Fl C
+.Op Fl c
+.Op Fl h
+.Op Fl o Ar file
+.Op Fl S Ar stack_size
+.Op Fl g Ar cc
+.Op Fl e Ar fn
+.Op Fl p Ar fn
+.Op Fl G Ar fn
+.Op Fl l Ar library
+.Op Fl z
+.Op Ar
+.Nm file
+.
+.Sh DESCRYPTION
+The
+.Nm 
+is brainfuck compiler using c.
+.Pp
+.Bl -tag -width Ds
+.It Fl C
+compile to C source code.
+.It Fl c
+compile not linked object file.
+.It Fl h
+print usage.
+.It Fl o Ar file
+set output file name.
+.It Fl S Ar stack_size
+set brainfuck stack size, by default 30000.
+.It Fl g Ar cc
+set C compiler name.
+.It Fl e Ar fn
+set code entry point for runtime.
+.It Fl p Ar fn
+set runtime put function name.
+.It Fl p Ar fn
+set runtime get function name.
+.It Fl l Ar library
+set runtime library.
+.It Fl z
+enable stack overflow checker, guarantees that the program can't call undefined behaviour.
+.El
+.
+.Sh EXIT STATUS
+.Ex -std
+.
+.Sh STANDARTS
+The
+.Nm
+utility is compliant with the
+.St -p1003.1-2008
+specification.
+.
+.Sh NOTES
+Programms compiled by
+.Nm
+require runtime library (by default libbfcc).
+.Pp
+You can install runtime without compiler,
+run "make runtime" with superuser rights.
+.
+.Sh AUTHORS
+.An gimura Aq gimura0001@gmail.com
+.
+.Sh SEE ALSO
+.Xr cc 1
