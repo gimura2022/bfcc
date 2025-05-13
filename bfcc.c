@@ -19,7 +19,13 @@
 #include <stdarg.h>
 #include <getopt.h>
 
-#include "bfcc.h"			/* include bfcc header */
+/* runtime function names */
+#define BFCCLIB_ENTRY_NAME "__bfcc_entry"
+#define BFCCLIB_PUT_NAME "__bfcc_put"
+#define BFCCLIB_GET_NAME "__bfcc_get"
+#define BFCCLIB_INC_NAME "__bfcc_inc"
+#define BFCCLIB_DEC_NAME "__bfcc_dec"
+#define BFCCLIB_NAME "bfcc"
 
 /* constants */
 #define DEFAULT_STACK_SIZE 30000	/* standart stack size for brainfuck */

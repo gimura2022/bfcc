@@ -2,4 +2,5 @@ bfcc
 *.out
 
 *.o
-lib*.*
+lib*.a
+lib*.so
