@@ -49,8 +49,8 @@ void BFCCLIB_DUMP(char* ptr, char* stack, int stack_size)
 
 	fprintf(stderr, "\n==========\nbfcc stack dump:\n");
 	fprintf(stderr, "stack_base:\t%p\n", stack);
-	fprintf(stderr, "stack_ptr:\t%p (in stack %x)\n", ptr, (unsigned int) (ptr - stack));
-	fprintf(stderr, "stack_end:\t%p\n", stack + stack_size);
+	fprintf(stderr, "stack_ptr:\t%p (in stack 0x%x)\n", ptr, (unsigned int) (ptr - stack));
+	fprintf(stderr, "stack_end:\t%p (stack size %d)\n", stack + stack_size, stack_size);
 
 	fprintf(stderr, "addr\tvalue\n");
 	for (i = stack; i < stack + stack_size; i++) {
