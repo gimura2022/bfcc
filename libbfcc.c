@@ -52,18 +52,19 @@ void BFCCLIB_DUMP(char* ptr, char* stack, int stack_size)
 	fprintf(stderr, "stack_ptr:\t%p (in stack %x)\n", ptr, (unsigned int) (ptr - stack));
 	fprintf(stderr, "stack_end:\t%p\n", stack + stack_size);
 
+	fprintf(stderr, "addr\tvalue\n");
 	for (i = stack; i < stack + stack_size; i++) {
-		for (j = i, repart = 0; j < stack + stack_size && *j == *i; j++, repart++);
+		fprintf(stderr, "0x%x\t0x%x%s", (unsigned int) (i - stack), *i,
+				i == ptr ? " -- stack_ptr\n" : "\n");
+
+		for (j = i, repart = 0; j < stack + stack_size && *j == *i && j != ptr; j++, repart++);
 
 		if (repart >= STACK_DUMP_REDUCION_MIN) {
-			fprintf(stderr, "%x\t%x\n", (unsigned int) (i - stack), *i);
 			fprintf(stderr, "...times %d...\n", repart);
 
 			i = j - 1;
 			continue;
 		}
-
-		fprintf(stderr, "%x\t%x\n", (unsigned int) (i - stack), *i);
 	}
 
 	fprintf(stderr, "==========\n");
