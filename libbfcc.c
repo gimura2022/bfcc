@@ -22,6 +22,8 @@
 #define BFCCLIB_INC __bfcc_inc
 #define BFCCLIB_DEC __bfcc_dec
 
+#define STACK_DUMP_REDUCION_MIN 10
+
 /* brainfuck programm entry */
 extern void BFCCLIB_ENTRY(void);
 
@@ -38,18 +40,48 @@ void BFCCLIB_GET(char* c)
 	*c = getc(stdin);
 }
 
+/* print stack dump */
+static void stack_dump(char* ptr, char* stack, int stack_size)
+{
+	char *i, *j;
+	int repart;
+
+	fprintf(stderr, "==========\nbfcc stack dump:\n");
+	fprintf(stderr, "stack_base:\t%p\n", stack);
+	fprintf(stderr, "stack_ptr:\t%p\n", ptr);
+	fprintf(stderr, "stack_end:\t%p\n", stack + stack_size);
+
+	for (i = stack; i < stack + stack_size; i++) {
+		for (j = i, repart = 0; j < stack + stack_size && *j == *i; j++, repart++);
+
+		if (repart >= STACK_DUMP_REDUCION_MIN) {
+			fprintf(stderr, "%x\t%x\n", (unsigned int) (i - stack), *i);
+			fprintf(stderr, "...times %d...\n", repart);
+
+			i = j - 1;
+			continue;
+		}
+
+		fprintf(stderr, "%x\t%x\n", (unsigned int) (i - stack), *i);
+	}
+
+	fprintf(stderr, "==========\n");
+}
+
 /* print runtime_error */
 static void runtime_error(const char* format)
 {
-	fprintf(stderr, "\n\n==========\nbfcc runtime error: %s\n==========\n", format);
+	fprintf(stderr, "==========\nbfcc runtime error: %s\n==========\n", format);
 	abort();
 }
 
 /* check stack pointer to valid */
 static void check_stack_ptr(char* ptr, char* stack, int stack_size)
 {
-	if (ptr < stack || ptr >= (stack + stack_size))
+	if (ptr < stack || ptr >= (stack + stack_size)) {
+		stack_dump(ptr, stack, stack_size);
 		runtime_error("stack pointer owerflowed");
+	}
 }
 
 /* increment stack pointer */
