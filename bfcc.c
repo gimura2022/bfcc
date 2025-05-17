@@ -43,8 +43,10 @@ static const char* bfcc_dump  = BFCCLIB_DUMP_NAME;
 static const char* bfcc_lib   = BFCCLIB_NAME;
 static int stack_size         = DEFAULT_STACK_SIZE;
 static const char* cc         = DEFAULT_CC;
+static const char* cflags     = "";
 static bool checks            = false;
 static bool stack_dump        = false;
+static bool verbose           = false;
 
 static const char* invocation_name;	/* the name through which the application
 					   was called from the console */
@@ -246,7 +248,11 @@ static void compile_object(const char* out_name, const char* in_name)
 
 	fclose(tmp_file);
 
-	snprintf(buf, COMMAND_BUF_LEN, "%s -o %s -c -x c %s", cc, out_name, tmp_name);
+	snprintf(buf, COMMAND_BUF_LEN, "%s %s -o %s -c -x c %s", cc, cflags, out_name, tmp_name);
+
+	if (verbose)
+		fprintf(stderr, "%s\n", buf);
+
 	system(buf);
 }
 
@@ -264,13 +270,18 @@ static void compile_full(const char* out_name, const char* in_name)
 
 	fclose(tmp_file);
 
-	snprintf(buf, COMMAND_BUF_LEN, "%s -o %s -x c %s -l%s", cc, out_name, tmp_name, bfcc_lib);
+	snprintf(buf, COMMAND_BUF_LEN, "%s %s -o %s -x c %s -l%s", cc, cflags, out_name, tmp_name, bfcc_lib);
+
+	if (verbose)
+		fprintf(stderr, "%s\n", buf);
+
 	system(buf);
 }
 
 /* usage text */
 #define USAGE_SMALL	"usage: bfcc [-C][-c][-h][-o file][-S stack_size][-g cc]"		\
-				"[-e fn][-p fn][-G fn][-i fn][-d fn][-D fn][-l library][-z][-s] file\n"
+				"[-e fn][-p fn][-G fn][-i fn][-d fn][-D fn][-l library]"	\
+				"[-z][-s][-f cflags][-v] file\n"
 #define USAGE		"	-C		compile to C source code\n"			\
 			"	-c		compile to object file\n"			\
 			"	-h		print help\n"					\
@@ -286,6 +297,8 @@ static void compile_full(const char* out_name, const char* in_name)
 			"	-l library	set generated code bfcc library\n"		\
 			"	-z		enable more checks\n"				\
 			"	-s		print stack dump at end of program\n"		\
+			"	-f		set flags for c compiler\n"			\
+			"	-v		print executing commands\n"			\
 			"	file		brainfuck file to compile\n"
 
 /* print usage */
@@ -323,7 +336,7 @@ int main(int argc, char* argv[])
 
 	int c;
 	opterr = 0;
-	while ((c = getopt(argc, argv, "Ccho:S:g:e:p:G:i:d:D:l:zs")) != -1) switch (c) {
+	while ((c = getopt(argc, argv, "Ccho:S:g:e:p:G:i:d:D:l:zsf:v")) != -1) switch (c) {
 	case 'C':				/* compile c source */
 		mode = MODE_COMPILE_C;
 		break;
@@ -378,6 +391,14 @@ int main(int argc, char* argv[])
 
 	case 's':				/* enable stack dump */
 		stack_dump = true;
+		break;
+
+	case 'f':				/* set flags for c compiler */
+		cflags = optarg;
+		break;
+
+	case 'v':				/* set verbose mode */
+		verbose = true;
 		break;
 
 	case 'h':				/* print help */

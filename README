@@ -5,7 +5,8 @@ NAME
 
 SYNOPSIS
      bfcc [-C] [-c] [-h] [-o file] [-S stack_size] [-g cc] [-e fn] [-p fn]
-	  [-G fn] [-i fn] [-d fn] [-D fn] [-l library] [-z] [-s] [file ...]
+	  [-G fn] [-i fn] [-d fn] [-D fn] [-l library] [-z] [-s] [-f cflags]
+	  [-v] [file ...]
      file
 
 DESCRYPTION
@@ -45,7 +46,12 @@ DESCRYPTION
      -z	     enable stack overflow checker, guarantees that the program can't
 	     call undefined behaviour.
 
-     -z	     print stack dump at end of program.
+     -s	     print stack dump at end of program.
+
+     -f cflags
+	     set flags for c compiler.
+
+     -v	     set verbose mode.
 
 EXIT STATUS
      The bfcc utility exits 0 on success, and >0 if an error occurs.
