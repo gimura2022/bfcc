@@ -59,6 +59,10 @@ DESCRYPTION
 
      ?	     set exit status.
 
+FILES
+     Programms compiled by bfcc utility can create stack dump files at
+     /var/cache/bfcc_dump-year-month-day-hour-minute-second.
+
 EXIT STATUS
      The bfcc utility exits 0 on success, and >0 if an error occurs.
 

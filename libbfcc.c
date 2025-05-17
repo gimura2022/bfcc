@@ -14,7 +14,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <signal.h>
+#include <time.h>
 
 /* function names */
 #define BFCCLIB_ENTRY __bfcc_entry
@@ -26,6 +28,8 @@
 #define BFCCLIB_STATUS __bfcc_status
 
 #define STACK_DUMP_REDUCION_MIN 10
+#define MAX_DUMP_FILE_LENGHT 1024
+#define DUBLICATE_OUT_BUF 1024
 
 static int status = 0;			/* return status */
 static const char* invocation_name;	/* the name through which the application
@@ -47,31 +51,18 @@ void BFCCLIB_GET(char* c)
 	*c = getc(stdin);
 }
 
-/* print stack dump */
-void BFCCLIB_DUMP(char* ptr, char* stack, int stack_size)
+/* print to file and stdout */
+static void dublicate_out(FILE* file, const char* format, ...)
 {
-	char *i, *j;
-	int repart;
+	va_list args;
+	char buf[DUBLICATE_OUT_BUF];
+	
+	va_start(args, format);
+	vsnprintf(buf, DUBLICATE_OUT_BUF, format, args);
+	va_end(args);
 
-	fprintf(stderr, "%s: stack dump:\n", invocation_name);
-	fprintf(stderr, "stack_base:\t%p\n", stack);
-	fprintf(stderr, "stack_ptr:\t%p (in stack 0x%x)\n", ptr, (unsigned int) (ptr - stack));
-	fprintf(stderr, "stack_end:\t%p (stack size %d)\n", stack + stack_size, stack_size);
-
-	fprintf(stderr, "addr\tvalue\n");
-	for (i = stack; i < stack + stack_size; i++) {
-		fprintf(stderr, "0x%x\t0x%x%s", (unsigned int) (i - stack), *i,
-				i == ptr ? " -- stack_ptr\n" : "\n");
-
-		for (j = i, repart = 0; j < stack + stack_size && *j == *i && j != ptr; j++, repart++);
-
-		if (repart >= STACK_DUMP_REDUCION_MIN) {
-			fprintf(stderr, "...times %d...\n", repart);
-
-			i = j - 1;
-			continue;
-		}
-	}
+	fprintf(stderr, "%s", buf);
+	fprintf(file, "%s", buf);
 }
 
 /* print runtime_error */
@@ -79,6 +70,50 @@ static void runtime_error(const char* format)
 {
 	fprintf(stderr, "%s: runtime error: %s\n", invocation_name, format);
 	abort();
+}
+
+/* print stack dump */
+void BFCCLIB_DUMP(char* ptr, char* stack, int stack_size)
+{
+	char *i, *j;
+	int repart;
+	time_t now;
+	struct tm* tm;
+	FILE* dump_file;
+	char dump_file_name[MAX_DUMP_FILE_LENGHT];
+
+	time(&now);
+	tm = localtime(&now);
+
+	snprintf(dump_file_name, MAX_DUMP_FILE_LENGHT, "/var/crash/bfcc_dump-%d-%d-%d-%d-%d-%d",
+			tm->tm_year, tm->tm_mon, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+
+	if ((dump_file = fopen(dump_file_name, "w")) == NULL)
+		runtime_error("can't open stack dump file");
+
+	dublicate_out(dump_file, "%s: stack dump:\n", invocation_name);
+	dublicate_out(dump_file, "stack_base:\t%p\n", stack);
+	dublicate_out(dump_file, "stack_ptr:\t%p (in stack 0x%x)\n", ptr, (unsigned int) (ptr - stack));
+	dublicate_out(dump_file, "stack_end:\t%p (stack size %d)\n", stack + stack_size, stack_size);
+
+	dublicate_out(dump_file, "addr\tvalue\n");
+	for (i = stack; i < stack + stack_size; i++) {
+		dublicate_out(dump_file, "0x%x\t0x%x%s", (unsigned int) (i - stack), *i,
+				i == ptr ? " -- stack_ptr\n" : "\n");
+
+		for (j = i, repart = 0; j < stack + stack_size && *j == *i && j != ptr; j++, repart++);
+
+		if (repart >= STACK_DUMP_REDUCION_MIN) {
+			dublicate_out(dump_file, "...times %d...\n", repart);
+
+			i = j - 1;
+			continue;
+		}
+	}
+
+	dublicate_out(dump_file, "stack dump saved to %s\n", dump_file_name);
+
+	fclose(dump_file);
 }
 
 /* check stack pointer to valid */
