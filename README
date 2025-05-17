@@ -53,6 +53,12 @@ DESCRYPTION
 
      -v	     set verbose mode.
 
+     The bfcc has extention operators:
+
+     #	     dump stack to stderr.
+
+     ?	     set exit status.
+
 EXIT STATUS
      The bfcc utility exits 0 on success, and >0 if an error occurs.
 
@@ -60,7 +66,7 @@ STANDARTS
      The bfcc utility is compliant with the IEEE Std 1003.1-2008 ("POSIX.1")
      specification and brainfuck language.
 
-     "#" operator is extention used for debugging.
+     "#" and "?" operator is extention.
 
 NOTES
      Programms compiled by bfcc require runtime library (by default libbfcc).

@@ -26,6 +26,7 @@
 #define BFCCLIB_INC_NAME "__bfcc_inc"
 #define BFCCLIB_DEC_NAME "__bfcc_dec"
 #define BFCCLIB_DUMP_NAME "__bfcc_stack_dump"
+#define BFCCLIB_STATUS_NAME "__bfcc_status"
 #define BFCCLIB_NAME "bfcc"
 
 /* constants */
@@ -34,19 +35,20 @@
 #define DEFAULT_CC "cc"
 #define WARN_BUF_LEN 1024
 
-static const char* bfcc_entry = BFCCLIB_ENTRY_NAME;
-static const char* bfcc_put   = BFCCLIB_PUT_NAME;
-static const char* bfcc_get   = BFCCLIB_GET_NAME;
-static const char* bfcc_inc   = BFCCLIB_INC_NAME;
-static const char* bfcc_dec   = BFCCLIB_DEC_NAME;
-static const char* bfcc_dump  = BFCCLIB_DUMP_NAME;
-static const char* bfcc_lib   = BFCCLIB_NAME;
-static int stack_size         = DEFAULT_STACK_SIZE;
-static const char* cc         = DEFAULT_CC;
-static const char* cflags     = "";
-static bool checks            = false;
-static bool stack_dump        = false;
-static bool verbose           = false;
+static const char* bfcc_entry  = BFCCLIB_ENTRY_NAME;
+static const char* bfcc_put    = BFCCLIB_PUT_NAME;
+static const char* bfcc_get    = BFCCLIB_GET_NAME;
+static const char* bfcc_inc    = BFCCLIB_INC_NAME;
+static const char* bfcc_dec    = BFCCLIB_DEC_NAME;
+static const char* bfcc_dump   = BFCCLIB_DUMP_NAME;
+static const char* bfcc_status = BFCCLIB_STATUS_NAME;
+static const char* bfcc_lib    = BFCCLIB_NAME;
+static int stack_size          = DEFAULT_STACK_SIZE;
+static const char* cc          = DEFAULT_CC;
+static const char* cflags      = "";
+static bool checks             = false;
+static bool stack_dump         = false;
+static bool verbose            = false;
 
 static const char* invocation_name;	/* the name through which the application
 					   was called from the console */
@@ -106,12 +108,15 @@ static void err(int status, const char* format, ...)
 
 #define c_bf_stack_dump() fprintf(__CODE_FILE, "\t%s(stack_ptr, stack, %d);\n", bfcc_dump, stack_size)
 
+#define c_bf_status() fprintf(__CODE_FILE, "\t%s(*stack_ptr);\n", bfcc_status)
+
 #define c_bf_forward_decls() 									\
 	fprintf(__CODE_FILE, "extern void %s(char);\n", bfcc_put);				\
 	fprintf(__CODE_FILE, "extern void %s(char*);\n", bfcc_get);				\
 	fprintf(__CODE_FILE, "extern void %s(char**, char*, int);\n", bfcc_inc);		\
 	fprintf(__CODE_FILE, "extern void %s(char**, char*, int);\n", bfcc_dec);		\
-	fprintf(__CODE_FILE, "extern void %s(char*, char*, int);\n", bfcc_dump);
+	fprintf(__CODE_FILE, "extern void %s(char*, char*, int);\n", bfcc_dump);		\
+	fprintf(__CODE_FILE, "extern void %s(char);\n", bfcc_status);
 
 /* function for printing output c code to file */
 static void compile(const char* code, FILE* out)
@@ -183,6 +188,10 @@ static void compile(const char* code, FILE* out)
 
 	case '#':
 		c_bf_stack_dump();
+		break;
+
+	case '?':
+		c_bf_status();
 		break;
 
 	default:

@@ -22,8 +22,13 @@
 #define BFCCLIB_INC __bfcc_inc
 #define BFCCLIB_DEC __bfcc_dec
 #define BFCCLIB_DUMP __bfcc_stack_dump
+#define BFCCLIB_STATUS __bfcc_status
 
 #define STACK_DUMP_REDUCION_MIN 10
+
+static int status = 0;			/* return status */
+static const char* invocation_name;	/* the name through which the application
+					   was called from the console */
 
 /* brainfuck programm entry */
 extern void BFCCLIB_ENTRY(void);
@@ -47,7 +52,7 @@ void BFCCLIB_DUMP(char* ptr, char* stack, int stack_size)
 	char *i, *j;
 	int repart;
 
-	fprintf(stderr, "\n==========\nbfcc stack dump:\n");
+	fprintf(stderr, "%s: stack dump:\n", invocation_name);
 	fprintf(stderr, "stack_base:\t%p\n", stack);
 	fprintf(stderr, "stack_ptr:\t%p (in stack 0x%x)\n", ptr, (unsigned int) (ptr - stack));
 	fprintf(stderr, "stack_end:\t%p (stack size %d)\n", stack + stack_size, stack_size);
@@ -66,14 +71,12 @@ void BFCCLIB_DUMP(char* ptr, char* stack, int stack_size)
 			continue;
 		}
 	}
-
-	fprintf(stderr, "==========\n");
 }
 
 /* print runtime_error */
 static void runtime_error(const char* format)
 {
-	fprintf(stderr, "\n==========\nbfcc runtime error: %s\n==========\n", format);
+	fprintf(stderr, "%s: runtime error: %s", invocation_name, format);
 	abort();
 }
 
@@ -102,10 +105,18 @@ void BFCCLIB_DEC(char** ptr, char* stack, int stack_size)
 	check_stack_ptr(*ptr, stack, stack_size);
 }
 
+/* set exit status */
+void BFCCLIB_STATUS(char new_status)
+{
+	status = new_status;
+}
+
 int main(int argc, char* argv[])
 {
+	invocation_name = argv[0];
+
 	/* call brainfuck programm */
 	BFCCLIB_ENTRY();
 
-	return 0;
+	return status;
 }

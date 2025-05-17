@@ -69,6 +69,16 @@ set flags for c compiler.
 .It Fl v
 set verbose mode.
 .El
+.Pp
+The
+.Nm
+has extention operators:
+.Bl -tag -width Ds
+.It #
+dump stack to stderr.
+.It ?
+set exit status.
+.El
 .
 .Sh EXIT STATUS
 .Ex -std
@@ -80,7 +90,7 @@ utility is compliant with the
 .St -p1003.1-2008
 specification and brainfuck language.
 .Pp
-"#" operator is extention used for debugging.
+"#" and "?" operator is extention.
 .
 .Sh NOTES
 Programms compiled by
