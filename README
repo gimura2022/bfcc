@@ -5,7 +5,7 @@ NAME
 
 SYNOPSIS
      bfcc [-C] [-c] [-h] [-o file] [-S stack_size] [-g cc] [-e fn] [-p fn]
-	  [-G fn] [-i fn] [-d fn] [-l library] [-z] [file ...]
+	  [-G fn] [-i fn] [-d fn] [-D fn] [-l library] [-z] [file ...]
      file
 
 DESCRYPTION
@@ -29,13 +29,15 @@ DESCRYPTION
 
      -p fn   set runtime put function name.
 
-     -p fn   set runtime get function name.
+     -G fn   set runtime get function name.
 
      -i fn   set runtime stack increment function name (it used only in stack
 	     overflow checker, see -z).
 
      -d fn   set runtime stack decrement function name (it used only in stack
 	     overflow checker, see -z).
+
+     -d fn   set runtime stack dump function name.
 
      -l library
 	     set runtime library.
@@ -48,7 +50,9 @@ EXIT STATUS
 
 STANDARTS
      The bfcc utility is compliant with the IEEE Std 1003.1-2008 ("POSIX.1")
-     specification.
+     specification and brainfuck language.
+
+     "#" operator is extention used for debugging.
 
 NOTES
      Programms compiled by bfcc require runtime library (by default libbfcc).
@@ -62,4 +66,4 @@ AUTHORS
 SEE ALSO
      cc(1)
 
-Debian				 May 13, 2025				Debian
+Debian				 May 17, 2025				Debian

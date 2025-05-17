@@ -21,6 +21,7 @@
 #define BFCCLIB_GET __bfcc_get
 #define BFCCLIB_INC __bfcc_inc
 #define BFCCLIB_DEC __bfcc_dec
+#define BFCCLIB_DUMP __bfcc_stack_dump
 
 #define STACK_DUMP_REDUCION_MIN 10
 
@@ -41,14 +42,14 @@ void BFCCLIB_GET(char* c)
 }
 
 /* print stack dump */
-static void stack_dump(char* ptr, char* stack, int stack_size)
+void BFCCLIB_DUMP(char* ptr, char* stack, int stack_size)
 {
 	char *i, *j;
 	int repart;
 
 	fprintf(stderr, "==========\nbfcc stack dump:\n");
 	fprintf(stderr, "stack_base:\t%p\n", stack);
-	fprintf(stderr, "stack_ptr:\t%p\n", ptr);
+	fprintf(stderr, "stack_ptr:\t%p (in stack %x)\n", ptr, (unsigned int) (ptr - stack));
 	fprintf(stderr, "stack_end:\t%p\n", stack + stack_size);
 
 	for (i = stack; i < stack + stack_size; i++) {
@@ -79,7 +80,7 @@ static void runtime_error(const char* format)
 static void check_stack_ptr(char* ptr, char* stack, int stack_size)
 {
 	if (ptr < stack || ptr >= (stack + stack_size)) {
-		stack_dump(ptr, stack, stack_size);
+		BFCCLIB_DUMP(ptr, stack, stack_size);
 		runtime_error("stack pointer owerflowed");
 	}
 }
