@@ -44,6 +44,7 @@ static const char* bfcc_lib   = BFCCLIB_NAME;
 static int stack_size         = DEFAULT_STACK_SIZE;
 static const char* cc         = DEFAULT_CC;
 static bool checks            = false;
+static bool stack_dump        = false;
 
 static const char* invocation_name;	/* the name through which the application
 					   was called from the console */
@@ -186,6 +187,9 @@ static void compile(const char* code, FILE* out)
 		break;
 	}
 
+	if (stack_dump)
+		c_bf_stack_dump();
+
 	c_end();
 
 #	undef __CODE_FILE
@@ -266,7 +270,7 @@ static void compile_full(const char* out_name, const char* in_name)
 
 /* usage text */
 #define USAGE_SMALL	"usage: bfcc [-C][-c][-h][-o file][-S stack_size][-g cc]"		\
-				"[-e fn][-p fn][-G fn][-i fn][-d fn][-D fn][-l library][-z] file\n"
+				"[-e fn][-p fn][-G fn][-i fn][-d fn][-D fn][-l library][-z][-s] file\n"
 #define USAGE		"	-C		compile to C source code\n"			\
 			"	-c		compile to object file\n"			\
 			"	-h		print help\n"					\
@@ -281,6 +285,7 @@ static void compile_full(const char* out_name, const char* in_name)
 			"	-D fn		set generated code stack dump function\n"	\
 			"	-l library	set generated code bfcc library\n"		\
 			"	-z		enable more checks\n"				\
+			"	-s		print stack dump at end of program\n"		\
 			"	file		brainfuck file to compile\n"
 
 /* print usage */
@@ -318,7 +323,7 @@ int main(int argc, char* argv[])
 
 	int c;
 	opterr = 0;
-	while ((c = getopt(argc, argv, "Ccho:S:g:e:p:G:i:d:D:l:z")) != -1) switch (c) {
+	while ((c = getopt(argc, argv, "Ccho:S:g:e:p:G:i:d:D:l:zs")) != -1) switch (c) {
 	case 'C':				/* compile c source */
 		mode = MODE_COMPILE_C;
 		break;
@@ -369,6 +374,10 @@ int main(int argc, char* argv[])
 
 	case 'z':				/* enable checks */
 		checks = true;
+		break;
+
+	case 's':				/* enable stack dump */
+		stack_dump = true;
 		break;
 
 	case 'h':				/* print help */

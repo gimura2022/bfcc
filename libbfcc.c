@@ -47,7 +47,7 @@ void BFCCLIB_DUMP(char* ptr, char* stack, int stack_size)
 	char *i, *j;
 	int repart;
 
-	fprintf(stderr, "==========\nbfcc stack dump:\n");
+	fprintf(stderr, "\n==========\nbfcc stack dump:\n");
 	fprintf(stderr, "stack_base:\t%p\n", stack);
 	fprintf(stderr, "stack_ptr:\t%p (in stack %x)\n", ptr, (unsigned int) (ptr - stack));
 	fprintf(stderr, "stack_end:\t%p\n", stack + stack_size);
@@ -72,7 +72,7 @@ void BFCCLIB_DUMP(char* ptr, char* stack, int stack_size)
 /* print runtime_error */
 static void runtime_error(const char* format)
 {
-	fprintf(stderr, "==========\nbfcc runtime error: %s\n==========\n", format);
+	fprintf(stderr, "\n==========\nbfcc runtime error: %s\n==========\n", format);
 	abort();
 }
 
