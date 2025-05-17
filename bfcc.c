@@ -96,6 +96,9 @@ static void err(int status, const char* format, ...)
 #define c_bf_inc() fprintf(__CODE_FILE, "\t%s(&stack_ptr, stack, %d);\n", bfcc_inc, stack_size)
 #define c_bf_dec() fprintf(__CODE_FILE, "\t%s(&stack_ptr, stack, %d);\n", bfcc_dec, stack_size)
 
+#define c_bf_add(x) fprintf(__CODE_FILE, "\t*stack_ptr += %d;\n", x)
+#define c_bf_sub(x) fprintf(__CODE_FILE, "\t*stack_ptr -= %d;\n", x)
+
 #define c_bf_forward_decls() 									\
 	fprintf(__CODE_FILE, "extern void %s(char);\n", bfcc_put);				\
 	fprintf(__CODE_FILE, "extern void %s(char*);\n", bfcc_get);				\
@@ -106,6 +109,7 @@ static void err(int status, const char* format, ...)
 static void compile(const char* code, FILE* out)
 {
 	const char* s;
+	int i;
 
 #	define __CODE_FILE out
 
@@ -124,11 +128,17 @@ static void compile(const char* code, FILE* out)
 
 	for (s = code; *s != '\0'; s++) switch (*s) {
 	case '+':
-		c_code("(*stack_ptr)++");
+		for (i = 0; *s == '+'; i++, s++);
+		s--;
+		c_bf_add(i);
+
 		break;
 
 	case '-':
-		c_code("(*stack_ptr)--");
+		for (i = 0; *s == '-'; i++, s++);
+		s--;
+		c_bf_sub(i);
+
 		break;
 
 	case '<':
