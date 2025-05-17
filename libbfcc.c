@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 
 /* function names */
 #define BFCCLIB_ENTRY __bfcc_entry
@@ -76,7 +77,7 @@ void BFCCLIB_DUMP(char* ptr, char* stack, int stack_size)
 /* print runtime_error */
 static void runtime_error(const char* format)
 {
-	fprintf(stderr, "%s: runtime error: %s", invocation_name, format);
+	fprintf(stderr, "%s: runtime error: %s\n", invocation_name, format);
 	abort();
 }
 
@@ -111,9 +112,18 @@ void BFCCLIB_STATUS(char new_status)
 	status = new_status;
 }
 
+/* segmentation falut handler */
+static void segv_handle(int sig)
+{
+	fprintf(stderr, "%s: program got segmentation falut, try compile with -z option\n", invocation_name);
+	exit(sig);
+}
+
 int main(int argc, char* argv[])
 {
 	invocation_name = argv[0];
+
+	signal(SIGSEGV, segv_handle);
 
 	/* call brainfuck programm */
 	BFCCLIB_ENTRY();
