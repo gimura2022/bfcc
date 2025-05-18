@@ -29,7 +29,7 @@ clean:
 	$(RM) README
 
 .PHONY: install
-install: $(NAME) $(NAME).1 runtime
+install: all
 	install -d $(DESTDIR)$(POSTFIX)/bin/
 	install -m 775 $(NAME) $(DESTDIR)$(POSTFIX)/bin/
 	install -d $(DESTDIR)$(POSTFIX)/share/man/man1/
