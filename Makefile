@@ -6,7 +6,7 @@ DESTDIR ?= /
 RM ?= rm -rf
 
 .PHONY: all
-all: $(NAME) lib$(NAME).a lib$(NAME).so
+all: $(NAME) lib$(NAME).a lib$(NAME).so README
 
 lib$(NAME).a: lib$(NAME).o
 	ar rcs lib$(NAME).a lib$(NAME).o
